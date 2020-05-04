@@ -22,7 +22,7 @@ class Transaction {
   @Column('float')
   value: number;
 
-  @ManyToOne(() => Category)
+  @ManyToOne(() => Category, { eager: true })
   @JoinColumn({ name: 'category_id' })
   category: string;
 

@@ -1,14 +1,16 @@
 import { Router } from 'express';
 
-// import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
+import BalanceTransactionService from '../services/BalanceTransactionService';
 // import DeleteTransactionService from '../services/DeleteTransactionService';
 // import ImportTransactionsService from '../services/ImportTransactionsService';
 
 const transactionsRouter = Router();
 
 transactionsRouter.get('/', async (request, response) => {
-  return response.json({ ok: true });
+  const balanceTransactionService = new BalanceTransactionService();
+  const balance = await balanceTransactionService.execute();
+  return response.json(balance);
 });
 
 transactionsRouter.post('/', async (request, response) => {
