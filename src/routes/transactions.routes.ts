@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import CreateTransactionService from '../services/CreateTransactionService';
 import BalanceTransactionService from '../services/BalanceTransactionService';
+import DeleteTransactionService from '../services/DeleteTransactionService';
 // import DeleteTransactionService from '../services/DeleteTransactionService';
 // import ImportTransactionsService from '../services/ImportTransactionsService';
 
@@ -33,7 +34,16 @@ transactionsRouter.post('/', async (request, response) => {
 });
 
 transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
+  try {
+    const transaction_id = request.params.id;
+    const deleteTransctionService = new DeleteTransactionService();
+    deleteTransctionService.execute({ transaction_id });
+    return response.status(204).json();
+  } catch (error) {
+    return response
+      .status(400)
+      .json({ message: 'Erro ao salvar uma transaction', error });
+  }
 });
 
 transactionsRouter.post('/import', async (request, response) => {
