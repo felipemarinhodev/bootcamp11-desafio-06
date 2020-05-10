@@ -8,13 +8,20 @@ interface Request {
 class CreateCategoryService {
   public async execute({ title }: Request): Promise<Category> {
     const categoryRepository = getRepository(Category);
-    const category = categoryRepository.create({
-      title,
+
+    let categorySaved = await categoryRepository.findOne({
+      where: { title },
     });
 
-    await categoryRepository.save(category);
+    if (!categorySaved) {
+      const category = categoryRepository.create({
+        title,
+      });
+      await categoryRepository.save(category);
+      categorySaved = category;
+    }
 
-    return category;
+    return categorySaved;
   }
 }
 

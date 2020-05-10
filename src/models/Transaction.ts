@@ -19,12 +19,12 @@ class Transaction {
   @Column()
   type: 'income' | 'outcome';
 
-  @Column('float')
+  @Column('decimal')
   value: number;
 
-  @ManyToOne(() => Category, { eager: true })
+  @ManyToOne(() => Category, category => category.transaction, { eager: true })
   @JoinColumn({ name: 'category_id' })
-  category: string;
+  category: Category;
 
   @CreateDateColumn()
   created_at: Date;

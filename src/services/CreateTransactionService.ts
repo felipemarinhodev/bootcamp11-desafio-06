@@ -1,15 +1,16 @@
-import { getRepository, getCustomRepository } from 'typeorm';
-// import AppError from '../errors/AppError';
+import { getCustomRepository } from 'typeorm';
+import AppError from '../errors/AppError';
 
 import Transaction from '../models/Transaction';
-import Category from '../models/Category';
 import TransactionsRepository from '../repositories/TransactionsRepository';
+import CreateCategoryService from './CreateCategoryService';
+import BalanceTransactionService from './BalanceTransactionService';
 
 interface Request {
-  title: string;
   value: string;
-  type: string;
-  category: number;
+  title: string;
+  type: 'income' | 'outcome';
+  category: string;
 }
 class CreateTransactionService {
   public async execute({
@@ -20,19 +21,28 @@ class CreateTransactionService {
   }: Request): Promise<Transaction> {
     const transactionRespository = getCustomRepository(TransactionsRepository);
 
-    const categoryRepository = getRepository(Category);
+    const createCategoryService = new CreateCategoryService();
 
-    const categorySaved = await categoryRepository.findOne({
-      where: { title: category },
+    const categorySaved = await createCategoryService.execute({
+      title: category,
     });
 
-    if (!categorySaved) {
-      throw new Error('Does not exist category informed.');
+    const valueTransaction = Number(value);
+
+    if (type === 'outcome') {
+      const balanceTransactionService = new BalanceTransactionService();
+      const { total } = await balanceTransactionService.execute();
+      if (total < valueTransaction) {
+        throw new AppError(
+          'You do not have a balance for this transaction.',
+          400,
+        );
+      }
     }
 
     const transaction = transactionRespository.create({
       title,
-      value,
+      value: valueTransaction,
       type,
       category: categorySaved.id,
     });

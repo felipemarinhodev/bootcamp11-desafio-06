@@ -1,5 +1,5 @@
 import { getCustomRepository } from 'typeorm';
-// import AppError from '../errors/AppError';
+import AppError from '../errors/AppError';
 
 import TransactionsRepository from '../repositories/TransactionsRepository';
 
@@ -14,10 +14,10 @@ class DeleteTransactionService {
     });
 
     if (!transaction) {
-      throw new Error('Not exist transaction.');
+      throw new AppError('Not exist transaction.');
     }
 
-    transactionRepository.delete(transaction_id);
+    await transactionRepository.delete(transaction_id);
   }
 }
 
