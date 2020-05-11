@@ -44,7 +44,7 @@ class CreateTransactionService {
       title,
       value: valueTransaction,
       type,
-      category: categorySaved.id,
+      category: categorySaved,
     });
 
     await transactionRespository.save(transaction);
